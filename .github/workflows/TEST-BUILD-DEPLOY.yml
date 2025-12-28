@@ -32,7 +32,6 @@ jobs:
 
       - name: Unit Tests
         run: |
-          python app.py
           pytest tests/ --maxfail=1 --disable-warnings -v
 
   BUILD:
