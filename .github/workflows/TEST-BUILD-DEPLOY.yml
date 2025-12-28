@@ -62,9 +62,9 @@ jobs:
 
       - name: push image to dockerhub
         run: |
-          echo ${{secrets.DOCKERHUB_PASSWORD}} | docker login -u ${{vars.DOCKERHUB_USERNAME}} --password-stdin
-          docker tag flask-python-app:latest ${{vars.DOCKERHUB_USERNAME}}/flask-python-app:v1.0.0
-          docker push ${{vars.DOCKERHUB_USERNAME}}/flask-python-app:v1.0.0
+          echo ${{secrets.DOCKERHUB_PASSWORD}} | docker login -u ${{vars.DOCKERHUB_USERNAME1}} --password-stdin
+          docker tag flask-python-app:latest ${{vars.DOCKERHUB_USERNAME1}}/flask-python-app:v1.0.0
+          docker push ${{vars.DOCKERHUB_USERNAME1}}/flask-python-app:v1.0.0
 
 
   DEPLOY:  
@@ -80,7 +80,7 @@ jobs:
           username: ubuntu
           key: ${{secrets.EC2_SSH_KEY}}
           script: |
-            docker pull ${{vars.DOCKERHUB_USERNAME}}/flask-python-app:v1.0.0
+            docker pull ${{vars.DOCKERHUB_USERNAME1}}/flask-python-app:v1.0.0
             docker stop flask-python-app || true
             docker rm flask-python-app || true
-            docker run -d --name flask-app -p 6767:5000 ${{vars.DOCKERHUB_USERNAME}}/flask-python-app:v1.0.0
+            docker run -d --name flask-app -p 6767:5000 ${{vars.DOCKERHUB_USERNAME1}}/flask-python-app:v1.0.0
