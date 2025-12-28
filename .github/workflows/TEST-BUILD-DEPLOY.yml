@@ -51,7 +51,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v7
         with:
-          name: dockerfile-artifact-${{github.run_id}}-${{matrix.os}}-${{github.job}}
+          name: dockerfile-artifact-${{github.run_id}}-ubuntu-latest-TEST
           path: .
           
       - name: Setup Docker Buildx
