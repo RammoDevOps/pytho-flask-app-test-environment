@@ -30,6 +30,13 @@ jobs:
           pip install -r requirements.txt
           pip install pytest
 
+      - name: Set PYTHONPATH
+        run: |
+          if [ "$RUNNER_OS" == "windows-latest"]; then
+            echo "PYTHONPATH=." >> $GITHUB_ENV
+          fi
+        shell: bash
+
       - name: Unit Tests
         run: |
           export PYTHONPATH=.
