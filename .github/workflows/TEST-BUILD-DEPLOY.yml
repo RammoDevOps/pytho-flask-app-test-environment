@@ -41,7 +41,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: dockerfile-artifact-${{github.run_id}}-${{matrix.os}}-${{github.job}}
-          path: ./Dockerfile
+          path: .
 
   BUILD:
     needs:
