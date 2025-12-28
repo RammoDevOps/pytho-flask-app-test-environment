@@ -1,0 +1,72 @@
+name: Launch-APP
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  TEST:
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+        python-version:
+          - 3.11
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{matrix.python-version}}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest
+
+      - name: Unit Tests
+        run: |
+          python app.py
+          pytest tests/ --maxfail=1 --disable-warnings -v
+
+  BUILD:
+    needs:
+      - TEST
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build docker image
+        run: docker build -t flask-python-app:latest .
+
+      - name: push image to dockerhub
+        run: |
+          echo ${{secrets.DOCKERHUB_PASSWORD}} | docker login -u ${{vars.DOCKERHUB_USERNAME}} --password-stdin
+          docker tag flask-python-app:latest ${{vars.DOCKERHUB_USERNAME}}/flask-python-app:v1.0.0
+          docker push ${{vars.DOCKERHUB_USERNAME}}/flask-python-app:v1.0.0
+
+
+  DEPLOY:  
+    needs:
+      - TEST
+      - BUILD
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH & Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{secrets.EC2_PUBLIC_IP}}
+          username: ubuntu
+          key: ${{secrets.EC2_SSH_KEY}}
+          script: |
+            docker pull ${{vars.DOCKERHUB_USERNAME}}/flask-python-app:v1.0.0
+            docker stop flask-python-app || true
+            docker rm flask-python-app || true
+            docker run -d --name flask-app -p 6767:5000 ${{vars.DOCKERHUB_USERNAME}}/flask-python-app:v1.0.0
