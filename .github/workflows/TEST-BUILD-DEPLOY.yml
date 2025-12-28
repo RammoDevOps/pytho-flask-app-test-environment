@@ -32,10 +32,7 @@ jobs:
 
       - name: Set PYTHONPATH
         run: |
-          if [ "$RUNNER_OS" == "Windows" ]; then
-            echo "PYTHONPATH=." >> $GITHUB_ENV
-          fi
-        shell: bash
+          echo "PYTHONPATH=." >> $GITHUB_ENV
 
       - name: Unit Tests
         run: |
