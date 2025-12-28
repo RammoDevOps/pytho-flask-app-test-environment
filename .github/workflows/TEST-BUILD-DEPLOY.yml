@@ -32,7 +32,7 @@ jobs:
 
       - name: Set PYTHONPATH
         run: |
-          if [ "$RUNNER_OS" == "windows-latest"]; then
+          if [ "$RUNNER_OS" == "Windows" ]; then
             echo "PYTHONPATH=." >> $GITHUB_ENV
           fi
         shell: bash
