@@ -37,6 +37,12 @@ jobs:
         run: |
           pytest tests/ --maxfail=1 --disable-warnings -v
 
+      - name: Upload as artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: dockerfile-aritfact
+          path: .
+
   BUILD:
     needs:
       - TEST
